@@ -1,0 +1,88 @@
+local e0=game:GetService("Players")local e1=e0.LocalPlayer 
+local e2=180 local e3=os.time()local e4=true local e5=false
+-- 添加模式变量
+local e11 = "killer" -- killer:180秒, survivor:120秒
+local e12 = 180 -- 当前模式时间
+
+local e6=Instance.new("ScreenGui")e6.ResetOnSpawn=false e6.IgnoreGuiInset=true
+local e7=Instance.new("TextLabel")e7.Size=UDim2.new(0,200,0,50)e7.Position=UDim2.new(0.5,-100,0.1,0)e7.BackgroundColor3=Color3.fromRGB(0,100,0)e7.TextColor3=Color3.fromRGB(255,255,255)e7.TextScaled=true e7.Visible=true e7.Text="杀手模式: "..e2.."秒"e7.Parent=e6
+local e8=Instance.new("TextButton")e8.Size=UDim2.new(0,80,0,30)e8.Position=UDim2.new(0.5,-40,0.18,0)e8.Text="关闭重置"e8.BackgroundColor3=Color3.fromRGB(0,100,0)e8.TextColor3=Color3.fromRGB(255,255,255)e8.Parent=e6
+local e9=Instance.new("TextButton")e9.Size=UDim2.new(0,80,0,30)e9.Position=UDim2.new(0.5,-40,0.25,0)e9.Text="删除脚本"e9.BackgroundColor3=Color3.fromRGB(255,100,0)e9.TextColor3=Color3.fromRGB(255,255,255)e9.Parent=e6
+
+-- 模式切换按钮（新增）
+local e13=Instance.new("TextButton")e13.Size=UDim2.new(0,100,0,30)e13.Position=UDim2.new(0.5,-50,0.32,0)e13.Text="切换到幸存者"e13.BackgroundColor3=Color3.fromRGB(0,0,150)e13.TextColor3=Color3.fromRGB(255,255,255)e13.Parent=e6
+
+-- 减1秒按钮（左边）
+local ef=Instance.new("TextButton")ef.Size=UDim2.new(0,30,0,30)ef.Position=UDim2.new(0.5,-130,0.1,0)ef.Text="-"ef.BackgroundColor3=Color3.fromRGB(150,0,0)ef.TextColor3=Color3.fromRGB(255,255,255)ef.TextScaled=true ef.Parent=e6
+-- 加1秒按钮（右边）
+local e10=Instance.new("TextButton")e10.Size=UDim2.new(0,30,0,30)e10.Position=UDim2.new(0.5,100,0.1,0)e10.Text="+"e10.BackgroundColor3=Color3.fromRGB(0,150,0)e10.TextColor3=Color3.fromRGB(255,255,255)e10.TextScaled=true e10.Parent=e6
+
+e6.Parent=e1:WaitForChild("PlayerGui")
+local ea=e1.Character local eb=ea and ea:FindFirstChild("Humanoid")
+e1.CharacterAdded:Connect(function(ec)if e4 then ea=ec eb=ea:WaitForChild('Humanoid')end end)
+
+-- 模式切换功能（新增）
+e13.MouseButton1Click:Connect(function()
+    if e11 == "killer" then
+        e11 = "survivor"
+        e2 = 120
+        e13.Text = "切换到杀手"
+        e13.BackgroundColor3 = Color3.fromRGB(150,0,0)
+        e7.BackgroundColor3 = Color3.fromRGB(0,100,0)
+        e7.Text = "幸存者模式: "..e2.."秒"
+    else
+        e11 = "killer"
+        e2 = 180
+        e13.Text = "切换到幸存者"
+        e13.BackgroundColor3 = Color3.fromRGB(0,0,150)
+        e7.BackgroundColor3 = Color3.fromRGB(150,0,0)
+        e7.Text = "杀手模式: "..e2.."秒"
+    end
+    e3 = os.time() -- 重置计时器
+end)
+
+e8.MouseButton1Click:Connect(function()e4=not e4 if e4 then e8.Text="关闭重置"e8.BackgroundColor3=Color3.fromRGB(0,100,0)
+    -- 根据当前模式设置颜色
+    if e11 == "killer" then
+        e7.BackgroundColor3=Color3.fromRGB(150,0,0)
+        e7.Text="杀手模式: "..e2.."秒"
+    else
+        e7.BackgroundColor3=Color3.fromRGB(0,100,0)
+        e7.Text="幸存者模式: "..e2.."秒"
+    end
+    e3=os.time()else e8.Text="开启重置"e8.BackgroundColor3=Color3.fromRGB(255,0,0)e7.Text="脚本已关闭"e7.BackgroundColor3=Color3.fromRGB(100,100,100)end end)
+
+e9.MouseButton1Click:Connect(function()if not e5 then e9.Text="确认删除？"e9.BackgroundColor3=Color3.fromRGB(255,0,0)e5=true wait(3)if e9 then e9.Text="删除脚本"e9.BackgroundColor3=Color3.fromRGB(255,100,0)e5=false end else e9.Text="删除中..."e9.BackgroundColor3=Color3.fromRGB(150,0,0)if e6 then e6:Destroy()end e4=false if script then script:Destroy()end end end)
+
+-- 减1秒功能（左边"-"按钮）
+ef.MouseButton1Click:Connect(function()e3=e3-1 end)
+-- 加1秒功能（右边"+"按钮）
+e10.MouseButton1Click:Connect(function()local ee=e2-(os.time()-e3)if ee>1 then e3=e3+1 end end)
+
+while true do if e4 then local ed=os.time()local ee=e2-(ed-e3)if ee>=0 then 
+        -- 根据模式更新文本
+        if e11 == "killer" then
+            e7.Text="杀手模式: "..ee.."秒"
+        else
+            e7.Text="幸存者模式: "..ee.."秒"
+        end
+        if ee>10 then 
+            if e11 == "killer" then
+                e7.BackgroundColor3=Color3.fromRGB(150,0,0) -- 杀手模式红色
+            else
+                e7.BackgroundColor3=Color3.fromRGB(0,100,0) -- 幸存者模式绿色
+            end
+        elseif ee>0 then 
+            e7.BackgroundColor3=Color3.fromRGB(255,0,0) -- 最后10秒变红色警告
+        else 
+            if e11 == "killer" then
+                e7.Text="杀手模式: 0秒"
+            else
+                e7.Text="幸存者模式: 0秒"
+            end
+            e7.BackgroundColor3=Color3.fromRGB(0,0,255)
+        end 
+    end 
+    if ed-e3>=e2 then if ea and eb then eb.Health=0 end e3=ed end 
+end 
+wait(.7)end
